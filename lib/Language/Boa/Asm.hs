@@ -32,10 +32,10 @@ instrAsm (IAdd dst val) = printf "  add %s, %s"  (argAsm dst) (argAsm val)
 instrAsm (ISub dst val) = printf "  sub %s, %s"  (argAsm dst) (argAsm val)
 instrAsm (IMul dst val) = printf "  imul %s, %s" (argAsm dst) (argAsm val)
 instrAsm (ICmp a1 a2)   = printf "cmp %s, %s" (argAsm a1) (argAsm a2)
-instrAsm (ILabel l)     = printf "call %s" (argAsm l)
-instrAsm (IJe  l)       = printf "je %s" (argAsm l)
-instrAsm (IJne  l)      = printf "jne %s" (argAsm l)
-instrAsm (IJmp l)       = printf "jmp %s" (argAsm l)
+instrAsm (ILabel l)     = printf "call %s" (labelAsm l)
+instrAsm (IJe  l)       = printf "je %s" (labelAsm l)
+instrAsm (IJne  l)      = printf "jne %s" (labelAsm l)
+instrAsm (IJmp l)       = printf "jmp %s" (labelAsm l)
 instrAsm IRet           =        "  ret"
 
 regAsm :: Reg -> Text

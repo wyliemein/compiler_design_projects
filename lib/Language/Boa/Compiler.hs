@@ -92,7 +92,7 @@ compileBind env (x, e) = (env', is)
 
 immArg :: Env -> IExp -> Arg
 immArg _   (Number n _)  = repr n
-immArg env e@(Id x _)    = error "TBD:immArg:Id"
+immArg env e@(Id x _)    = (RegOffset err ESP)
   where
     err                  = abort (errUnboundVar (sourceSpan e) x)
 immArg _   e             = panic msg (sourceSpan e)
@@ -106,8 +106,8 @@ errUnboundVar l x = mkError (printf "Unbound variable %s" x) l
 -- | Compiling Primitive Operations
 --------------------------------------------------------------------------------
 compilePrim1 :: Tag -> Env -> Prim1 -> AExp -> [Instruction]
-compilePrim1 l env Add1 v = error "TBD:compilePrim1:Add1"
-compilePrim1 l env Sub1 v = error "TBD:compilePrim1:Sub1"
+compilePrim1 l env Add1 v = compileEnv env v ++ [IAdd (Reg EAX) (Const 1)]
+compilePrim1 l env Sub1 v = compileEnv env v ++ [ISub (Reg EAX) (Const (1))]
 
 compilePrim2 :: Tag -> Env -> Prim2 -> IExp -> IExp -> [Instruction]
 compilePrim2 l env Plus  v1 v2 = error "TBD:compilePrim2:Plus"

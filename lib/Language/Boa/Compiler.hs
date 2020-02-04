@@ -22,12 +22,12 @@ import           Language.Boa.Asm        (asm)
 --------------------------------------------------------------------------------
 compiler :: FilePath -> Text -> Text
 --------------------------------------------------------------------------------
-compiler f = parse f >>> anormal >>> tag >>> compile >>> asm
+--compiler f = parse f >>> anormal >>> tag >>> compile >>> asm
 
 -- | to test your compiler with code that is ALREADY in ANF comment out
 --   the above definition and instead use the below:
 
--- compiler f = parse f >>> tag >>> compile >>> asm
+compiler f = parse f >>> tag >>> compile >>> asm
 
 
 --------------------------------------------------------------------------------
@@ -72,7 +72,8 @@ compileEnv env (Prim1 o v l)     = compilePrim1 l env o v
 
 compileEnv env (Prim2 o v1 v2 l) = compilePrim2 l env o v1 v2
 
-compileEnv env (If v e1 e2 (x, e))    = compileEnv env v ++ [ICmp (Reg EAX) (Const 0), IJmp (BranchDone e)]
+compileEnv env (If v e1 e2 l)    = compileEnv env v ++ [ICmp (Reg EAX) (Const 0), IJne (BranchTrue  0)]
+                                        ++ compileEnv env e1 ++ [IJmp (BranchDone 1)] ++ ILabel (BranchTrue 2) : compileEnv env e2 ++ [ILabel (BranchDone 2)]
 
 compileImm :: Env -> IExp -> Instruction
 compileImm env v = IMov (Reg EAX) (immArg env v)
@@ -107,7 +108,7 @@ errUnboundVar l x = mkError (printf "Unbound variable %s" x) l
 --------------------------------------------------------------------------------
 compilePrim1 :: Tag -> Env -> Prim1 -> AExp -> [Instruction]
 compilePrim1 l env Add1 v = compileEnv env v ++ [IAdd (Reg EAX) (Const 1)]
-compilePrim1 l env Sub1 v = compileEnv env v ++ [ISub (Reg EAX) (Const (1))]
+compilePrim1 l env Sub1 v = compileEnv env v ++ [ISub (Reg EAX) (Const 1)]
 
 compilePrim2 :: Tag -> Env -> Prim2 -> IExp -> IExp -> [Instruction]
 compilePrim2 l env Plus  v1 v2 = error "TBD:compilePrim2:Plus"

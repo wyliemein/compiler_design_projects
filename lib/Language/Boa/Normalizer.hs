@@ -86,17 +86,18 @@ imms i (e:es)       = (i'', bs' ++ bs, e' : es' )
 --------------------------------------------------------------------------------
 imm :: Int -> Expr a -> (Int, Binds a, ImmExpr a)
 --------------------------------------------------------------------------------
-imm i (Number n l)      = ([], Number n l)
+imm i (Number n l)      = (i, [], Number n l)
 
-imm i (Id x l)          = ([], Id x l)
+imm i (Id x l)          = (i, [], Id x l)
 
 imm i e@(Prim1 _ _ l)   = immExp i e l
 
-imm i (Prim2 o e1 e2 l) = (b1s ++ b2s ++ [(t, Prim2 o e1 e2)], Id t)
+imm i (Prim2 o e1 e2 l) = (i''', bs, mkId v l)
   where
-  t                     = fresh t
-  (b1s, e1)             = imm e1
-  (b2s, e2)             = imm e2
+  (i', b1s, v1)             = imm i e1 
+  (i'', b2s, v2)            = imm i' e2 
+  (i''', v)                 = fresh l i''
+  bs                        = b1s ++ b2s ++ [(v, (Prim2 o v1 v2 l, l))]
 
 imm i e@(If _ _ _  l)   = immExp i e l
 

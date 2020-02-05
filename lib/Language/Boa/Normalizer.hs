@@ -32,13 +32,19 @@ anf i (Number n l)      = (i, Number n l)
 
 anf i (Id     x l)      = (i, Id     x l)
 
-anf i (Let x e b l)     = error "TBD:anf:let"
+anf i (Let x e b l)     = (i'', Let x e' b' l)
+  where
+    (i', e') = anf i e
+    (i'', b') = anf i' b
 
 anf i (Prim1 o e l)     = (i', Prim1 o e' l)
   where
     (i', e') = anf i e
 
-anf i (Prim2 o e1 e2 l) = error "TBD:anf:prim2"
+anf i (Prim2 o e1 e2 l) = (i'', Prim2 o e1' e2' l)
+  where
+    (i', e1') = anf i e1
+    (i'', e2') = anf i' e2
 
 anf i (If c e1 e2 l)    = (i''', If c' e1' e2' l)
   where
@@ -80,13 +86,17 @@ imms i (e:es)       = (i'', bs' ++ bs, e' : es' )
 --------------------------------------------------------------------------------
 imm :: Int -> Expr a -> (Int, Binds a, ImmExpr a)
 --------------------------------------------------------------------------------
-imm i (Number n l)      = error "TBD:imm:Number"
+imm i (Number n l)      = ([], Number n l)
 
-imm i (Id x l)          = error "TBD:imm:Id"
+imm i (Id x l)          = ([], Id x l)
 
 imm i e@(Prim1 _ _ l)   = immExp i e l
 
-imm i (Prim2 o e1 e2 l) = error "TBD:imm:prim2"
+imm i (Prim2 o e1 e2 l) = (b1s ++ b2s ++ [(t, Prim2 o e1 e2)], Id t)
+  where
+  t                     = fresh t
+  (b1s, e1)             = imm e1
+  (b2s, e2)             = imm e2
 
 imm i e@(If _ _ _  l)   = immExp i e l
 

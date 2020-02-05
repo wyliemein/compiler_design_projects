@@ -19,7 +19,10 @@ runCompiler :: IO ()
 runCompiler = do
   f <- getSrcFile
   s <- readFile f
-  let out = (pprint . anormal . parse f) s
+  let af = (anormal . parse f) s
+  let out = if isAnf af
+            then "In ANF"
+            else "Not in ANF: " ++ (pprint af)
   hPutStrLn stdout out
   exitSuccess
 

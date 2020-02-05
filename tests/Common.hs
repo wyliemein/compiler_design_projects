@@ -60,7 +60,7 @@ matchSuccess expected result = trim expected == trim result
 mkAnfTest :: TestName -> Program -> Result -> IO (String, Bool)
 mkAnfTest name pgm expect = do
   res <- runHelper Anf name pgm
-  return $ check logF res expect
+  return $ check logF res (Right "In ANF")
   where
     logF = dirExt "output" name Log
 

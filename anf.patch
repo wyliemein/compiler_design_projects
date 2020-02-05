@@ -26,3 +26,4 @@ index a2bdfaf..9a79a80 100644
 +  return $ check logF res (Right "In ANF")
    where
      logF = dirExt "output" name Log
+

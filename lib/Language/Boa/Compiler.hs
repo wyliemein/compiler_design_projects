@@ -66,14 +66,16 @@ compileEnv env v@(Number {})     = [ compileImm env v  ]
 
 compileEnv env v@(Id {})         = [ compileImm env v  ]
 
-compileEnv env e@(Let b e1 e2 l) = error "TBD:compileEnv:Let"
+compileEnv env e@(Let b e1 e2 l) = compileEnv env e1 ++ [IMov (stackVar bn) (Reg EAX)] ++ compileEnv env' e2
+                      where
+                       (bn, env') = pushEnv b env
 
 compileEnv env (Prim1 o v l)     = compilePrim1 l env o v
 
 compileEnv env (Prim2 o v1 v2 l) = compilePrim2 l env o v1 v2
 
-compileEnv env (If v e1 e2 l)    = compileEnv env e1 ++ [ICmp (Reg EAX) (Const 0), IJe (BranchTrue  (l))]
-                                        ++ compileEnv env e1 ++ [IJmp (BranchDone  (l))] ++ ILabel (BranchTrue  (l)) : compileEnv env e2 ++ [ILabel (BranchDone  (l))]
+compileEnv env (If v e1 e2 l)    = compileEnv env v ++ [ICmp (Reg EAX) (Const 0), IJne (BranchTrue  (snd l))]
+                                        ++ compileEnv env e2 ++ [IJmp (BranchTrue  (snd l))] ++ ILabel(BranchTrue(snd l)): compileEnv env e1 ++ [ILabel (BranchDone  (snd l))]
 
 compileImm :: Env -> IExp -> Instruction
 compileImm env v = IMov (Reg EAX) (immArg env v)
@@ -93,9 +95,11 @@ compileBind env (x, e) = (env', is)
 
 immArg :: Env -> IExp -> Arg
 immArg _   (Number n _)  = repr n
-immArg env e@(Id x _)    = (RegOffset err ESP)
+immArg env e@(Id x _)    = stackVar xn
   where
-    err                  = abort (errUnboundVar (sourceSpan e) x)
+    xn                   = case lookupEnv x env of
+                            Just n->n
+                            Nothing -> panic ("Unbound variable " ++ x) (sourceSpan e)
 immArg _   e             = panic msg (sourceSpan e)
   where
     msg                  = "Unexpected non-immExpr in immArg: " ++ show (void e)

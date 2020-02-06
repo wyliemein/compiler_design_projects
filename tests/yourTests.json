@@ -3,18 +3,24 @@
         "name"   : "test1",
         "code"   : "file",
         "result" : { "value": "1" },
-        "anf"    : true
+        "anf"    : false
       },
       {
         "name"   : "test2",
         "code"   : "file",
         "result" : { "value": "20" },
-        "anf"    : true
+        "anf"    : false
       },
       {
         "name"   : "test3",
         "code"   : "file",
-        "result" : { "value": "12" },
-        "anf"    : true
+        "result" : { "value": "20" },
+        "anf"    : false
+      },
+      {
+        "name"   : "test4",
+        "code"   : "file",
+        "result" : { "value": "-8" },
+        "anf"    : false
       }
 ]

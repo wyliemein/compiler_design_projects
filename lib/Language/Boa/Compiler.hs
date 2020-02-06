@@ -75,7 +75,7 @@ compileEnv env (Prim1 o v l)     = compilePrim1 l env o v
 compileEnv env (Prim2 o v1 v2 l) = compilePrim2 l env o v1 v2
 
 compileEnv env (If v e1 e2 l)    = compileEnv env v ++ [ICmp (Reg EAX) (Const 0), IJne (BranchTrue  (snd l))]
-                                        ++ compileEnv env e2 ++ [IJmp (BranchTrue  (snd l))] ++ ILabel(BranchTrue(snd l)): compileEnv env e1 ++ [ILabel (BranchDone  (snd l))]
+                                        ++ compileEnv env e2 ++ [IJmp (BranchDone  (snd l))] ++ ILabel(BranchTrue(snd l)): compileEnv env e1 ++ [ILabel (BranchDone  (snd l))]
 
 compileImm :: Env -> IExp -> Instruction
 compileImm env v = IMov (Reg EAX) (immArg env v)

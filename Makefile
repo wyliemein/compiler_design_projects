@@ -68,3 +68,4 @@ ghci:
 
 ghcid:
 	ghcid --command="$(GHCICOMMAND)"
+

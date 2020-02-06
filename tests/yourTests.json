@@ -1,3 +1,20 @@
 [
-    
+    {
+        "name"   : "test1",
+        "code"   : "file",
+        "result" : { "value": "1" },
+        "anf"    : true
+      },
+      {
+        "name"   : "test2",
+        "code"   : "file",
+        "result" : { "value": "20" },
+        "anf"    : true
+      },
+      {
+        "name"   : "test3",
+        "code"   : "file",
+        "result" : { "value": "12" },
+        "anf"    : true
+      }
 ]
